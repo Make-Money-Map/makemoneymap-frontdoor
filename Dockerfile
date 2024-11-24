@@ -1,38 +1,22 @@
-# Stage 1: Build
-FROM node:18-alpine AS builder
+# Use Node.js 18 Alpine as the base image
+FROM node:18-alpine
 
-# Set working directory
+# Set the working directory
 WORKDIR /app
 
-# Install dependencies
-COPY package.json package-lock.json* yarn.lock* ./ 
-RUN npm install --force --frozen-lockfile --prefer-offline
+# Copy package.json and package-lock.json (or yarn.lock) into the container
+COPY package.json package-lock.json* ./
 
-# Copy all necessary files
+# Install dependencies, force install to avoid any lockfile issues
+RUN npm install --force
+
+# Copy the rest of the application files into the container
 COPY . .
 
-# Build the Next.js project
+# Build the Next.js project for production
 RUN npm run build
 
-# Stage 2: Production Image
-FROM node:18-alpine AS runner
-
-# Set environment variables
-ENV NODE_ENV production
-
-# Set working directory
-WORKDIR /app
-
-# Install only production dependencies
-COPY package.json package-lock.json* yarn.lock* ./
-RUN npm install --force --frozen-lockfile --prefer-offline --production
-
-# Copy built files from builder stage
-COPY --from=builder /app/.next ./.next
-COPY --from=builder /app/public ./public
-COPY --from=builder /app/next.config.js ./
-
-# Expose the default Next.js port
+# Expose port 3000 to access the app
 EXPOSE 3000
 
 # Start the Next.js application
