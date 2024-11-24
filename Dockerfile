@@ -6,7 +6,7 @@ WORKDIR /app
 
 # Install dependencies
 COPY package.json package-lock.json* yarn.lock* ./ 
-RUN npm install --frozen-lockfile --prefer-offline
+RUN npm install --force --frozen-lockfile --prefer-offline
 
 # Copy all necessary files
 COPY . .
