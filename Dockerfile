@@ -25,7 +25,7 @@ WORKDIR /app
 
 # Install only production dependencies
 COPY package.json package-lock.json* yarn.lock* ./
-RUN npm install --frozen-lockfile --prefer-offline --production
+RUN npm install --force --frozen-lockfile --prefer-offline --production
 
 # Copy built files from builder stage
 COPY --from=builder /app/.next ./.next
